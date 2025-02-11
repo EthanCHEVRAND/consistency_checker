@@ -4,6 +4,11 @@ from time import time_ns
 
 last_click = time_ns()
 
+"""
+This function records when a click happens, updates the last_click global variable and calls the show_time function
+Parameters : 
+    event -> event sent by tkinter
+"""
 def key_press(event):
     global last_click
     current_click = time_ns()
@@ -11,6 +16,12 @@ def key_press(event):
     last_click = current_click
     show_time(time)
 
+
+"""
+This function is used to calculate the delta between tow consecutive clicks and displays it in a terminal + in the tkinter window
+Parameters : 
+    time -> the time.time_ns() of the current click 
+"""
 def show_time(time):
     unit = "ms"
     time /= 1000000
