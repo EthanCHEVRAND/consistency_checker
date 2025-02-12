@@ -40,6 +40,7 @@ Parameters :
 def key_press(event):
     global last_click
     global last_time
+
     current_click = time_ns()
     time = current_click - last_click
     
@@ -73,6 +74,7 @@ Parameters :
 def calc_accuracy(time):
     global accuracy
     global best_accuracy
+
     acc = 100 * (time / last_time)
     if acc > 100:
         acc = 200 - acc
@@ -80,13 +82,15 @@ def calc_accuracy(time):
         acc = 0
     if acc > best_accuracy:
         best_accuracy = acc
-        best_accur.config(text=(round(best_accuracy, 2), "%"))
+        best_accur.config(text=("best accuracy : " + str(round(best_accuracy, 2)) + "%"))
     accuracy = str(round(acc, 2))
     accuracy += "%"
     accur.config(text=accuracy)
 
+
 def start_spdtest_func():
     global chrono
+
     for i in range(chrono):
         sleep(1)
         chrono -= 1
@@ -97,13 +101,16 @@ def start_spdtest_func():
 
 def incr_spd():
     global click_count
+
     click_count += 1
     click_count_show.config(text=click_count)
+
 
 def show_page(page):
     spdtest.pack_forget()
     acctest.pack_forget()
     reftest.pack_forget()
+    delaytest.pack_forget()
 
     if page == acctest:
         init_acc()
@@ -114,24 +121,28 @@ def show_page(page):
 # -------------------------------------------------- tkinter --------------------------------------------------
 
 root = Tk()
-root.geometry('640x480')
+root.geometry('440x300')
 
 nav = Frame(root, height=50)
 nav.pack(fill="x")
-nav_spdtest = Button(nav, text="speedtest", command=lambda: show_page(spdtest))
-nav_spdtest.pack(side="left")
 nav_acctest = Button(nav, text="accuracy test", command=lambda: show_page(acctest))
 nav_acctest.pack(side="left")
+nav_spdtest = Button(nav, text="speedtest", command=lambda: show_page(spdtest))
+nav_spdtest.pack(side="left")
 nav_reflextest = Button(nav, text="reflex test", command=lambda: show_page(reftest))
 nav_reflextest.pack(side="left")
+nav_delaytest = Button(nav, text="delay test", command=lambda: show_page(delaytest))
+nav_delaytest.pack(side="left")
 
 acctest = Frame(root)
+presentation_acc = Label(acctest, text="ACCURACY TEST")
+presentation_acc.pack(side="top", pady=20)
 result_acc=Label(acctest, width=20, text="click to start")
-result_acc.pack()
+result_acc.pack(pady=30)
 accur=Label(acctest, width=20, text="")
 accur.pack()
-best_accur = Label(acctest, text=(best_accuracy, "%"))
-best_accur.pack()
+best_accur = Label(acctest, text=("best accuracy : " + str(round(best_accuracy, 2)) + "%"))
+best_accur.pack(side="bottom")
 
 spdtest = Frame(root)
 result_spd=Label(spdtest, height=5, width=20, text="")
@@ -146,6 +157,15 @@ click_count_show.pack()
 reftest = Frame(root)
 result_ref=Label(reftest, height=5, width=20, text="cliquez (?)")
 result_ref.pack()
+
+delaytest = Frame(root)
+result_del=Label(delaytest, height=5, width=20, text="cliquez (delay)")
+result_del.pack()
+
+footer = Frame(root)
+footer.pack(side="bottom")
+footer_text = Label(footer, text="all rights reserved @zespatule")
+footer_text.pack(side="left")
 
 show_page(acctest)
 
