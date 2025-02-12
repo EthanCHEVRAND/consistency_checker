@@ -2,7 +2,7 @@
 
 from tkinter import *
 from tkinter import ttk
-from time import time_ns
+from time import time_ns, sleep
 
 
 # -------------------------------------------------- global variables --------------------------------------------------
@@ -10,6 +10,10 @@ from time import time_ns
 last_click = time_ns()
 last_time = 1
 accuracy = "100%"
+best_accuracy = 0
+
+click_count = 0
+chrono = 10
 
 
 # -------------------------------------------------- functions --------------------------------------------------
@@ -18,10 +22,12 @@ def init_acc():
     global last_click
     global last_time
     global accuracy
+    global best_accuracy
 
     last_click = time_ns()
     last_time = 1
     accuracy = "100%"
+    best_accuracy = 0
 
     result_acc.config(text="cliquez")
     accur.config(text="")
@@ -66,14 +72,33 @@ Parameters :
 """
 def calc_accuracy(time):
     global accuracy
+    global best_accuracy
     acc = 100 * (time / last_time)
     if acc > 100:
         acc = 200 - acc
     if acc < 0:
         acc = 0
+    if acc > best_accuracy:
+        best_accuracy = acc
+        best_accur.config(text=(round(best_accuracy, 2), "%"))
     accuracy = str(round(acc, 2))
     accuracy += "%"
     accur.config(text=accuracy)
+
+def start_spdtest_func():
+    global chrono
+    for i in range(chrono):
+        sleep(1)
+        chrono -= 1
+    final_click_count = click_count
+    spdtest_button.config(DISABLED)
+    click_count_show.config(text=final_click_count)
+        
+
+def incr_spd():
+    global click_count
+    click_count += 1
+    click_count_show.config(text=click_count)
 
 def show_page(page):
     spdtest.pack_forget()
@@ -101,14 +126,22 @@ nav_reflextest = Button(nav, text="reflex test", command=lambda: show_page(refte
 nav_reflextest.pack(side="left")
 
 acctest = Frame(root)
-result_acc=Label(acctest, height=5, width=20, text="cliquez")
+result_acc=Label(acctest, width=20, text="click to start")
 result_acc.pack()
-accur=Label(acctest, height=5, width=20, text="")
+accur=Label(acctest, width=20, text="")
 accur.pack()
+best_accur = Label(acctest, text=(best_accuracy, "%"))
+best_accur.pack()
 
 spdtest = Frame(root)
-result_spd=Label(spdtest, height=5, width=20, text="cliquez (10 sec)")
+result_spd=Label(spdtest, height=5, width=20, text="")
 result_spd.pack()
+start_spdtest = Button(spdtest, text="start", command=start_spdtest_func)
+start_spdtest.pack()
+spdtest_button = Button(spdtest, height=10, width=30, text="click", command=incr_spd)
+spdtest_button.pack()
+click_count_show = Label(spdtest, text=click_count)
+click_count_show.pack()
 
 reftest = Frame(root)
 result_ref=Label(reftest, height=5, width=20, text="cliquez (?)")
